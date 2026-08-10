@@ -12,7 +12,7 @@ namespace EprRegisterEnrolBackend.Auth;
 
 // Verifies inbound pushes from ManagementBe (RA-311 OBE-2), the reverse direction of
 // HttpCaseWorkingApiAdapter's own outbound signing. Recomputes the same v3 canonical-payload
-// HMAC-SHA256 signature ManagementBe's CognitoClientIdAuthenticationHandler produces, with
+// HMAC-SHA256 signature ManagementBe's ClientIdAuthenticationHandler produces, with
 // clock-skew bounding and single-use nonce replay protection.
 public class CaseManagementAuthenticationHandler(
     IOptionsMonitor<CaseManagementAuthenticationOptions> options,
@@ -83,12 +83,12 @@ public class CaseManagementAuthenticationHandler(
             correlationId ?? "(absent)"
         );
 
-        if (!Request.Headers.TryGetValue("x-cdp-cognito-client-id", out var clientIdValues))
-            return Task.FromResult(Fail("Missing x-cdp-cognito-client-id header."));
+        if (!Request.Headers.TryGetValue("x-cdp-client-id", out var clientIdValues))
+            return Task.FromResult(Fail("Missing x-cdp-client-id header."));
 
         var clientId = clientIdValues.ToString();
-        if (!string.Equals(clientId, config.ExpectedCognitoClientId, StringComparison.Ordinal))
-            return Task.FromResult(Fail("Unrecognised x-cdp-cognito-client-id."));
+        if (!string.Equals(clientId, config.ExpectedClientId, StringComparison.Ordinal))
+            return Task.FromResult(Fail("Unrecognised x-cdp-client-id."));
 
         if (!Request.Headers.TryGetValue("x-cdp-auth-signature", out var signatureValues))
             return Task.FromResult(Fail("Missing x-cdp-auth-signature header."));
@@ -173,7 +173,7 @@ public class CaseManagementAuthenticationHandler(
 
     // Verification-side counterpart of HttpCaseWorkingApiAdapter.ComputeSignature (v3 canonical
     // payload) — the reverse direction of the same scheme ManagementBe's
-    // CognitoClientIdAuthenticationHandler uses. Must stay in sync — any change is breaking.
+    // ClientIdAuthenticationHandler uses. Must stay in sync — any change is breaking.
     internal static string ComputeSignature(
         string sharedSecret,
         string clientId,

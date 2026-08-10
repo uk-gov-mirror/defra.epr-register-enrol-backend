@@ -680,7 +680,7 @@ public class HttpCaseWorkingApiAdapter(
             request.Content = JsonContent.Create(body, options: contentOptions ?? JsonOptions);
         }
 
-        request.Headers.Add("x-cdp-cognito-client-id", _config.CognitoClientId);
+        request.Headers.Add("x-cdp-client-id", _config.ClientId);
 
         if (!string.IsNullOrEmpty(userId))
             request.Headers.Add("x-cdp-user-id", userId);
@@ -693,7 +693,7 @@ public class HttpCaseWorkingApiAdapter(
             var nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
             var signature = ComputeSignature(
                 _config.SharedSecret,
-                _config.CognitoClientId,
+                _config.ClientId,
                 userId,
                 userName,
                 timestamp,
@@ -708,7 +708,7 @@ public class HttpCaseWorkingApiAdapter(
         return request;
     }
 
-    // Port of ManagementBe's CognitoClientIdAuthenticationHandler.ComputeSignature
+    // Port of ManagementBe's ClientIdAuthenticationHandler.ComputeSignature
     // (v3 canonical payload — see ManagementBe ADR-0005). Must stay in sync —
     // any change is a breaking change requiring a coordinated deploy.
     internal static string ComputeSignature(

@@ -10,5 +10,5 @@ public class CaseManagementAuthConfig
     /// </summary>
     public string? SharedSecret { get; set; }
 
-    public string ExpectedCognitoClientId { get; set; } = "epr-register-enrol-management-be";
+    public string ExpectedClientId { get; set; } = "epr-register-enrol-management-be";
 }

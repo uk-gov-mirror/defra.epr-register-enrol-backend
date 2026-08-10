@@ -31,7 +31,7 @@ public class CaseManagementAuthenticationHandlerTests
             new CaseManagementAuthConfig
             {
                 SharedSecret = sharedSecret,
-                ExpectedCognitoClientId = TestClientId,
+                ExpectedClientId = TestClientId,
             }
         );
         var environment = Substitute.For<IHostEnvironment>();
@@ -84,7 +84,7 @@ public class CaseManagementAuthenticationHandlerTests
             );
 
         if (clientId is not null)
-            context.Request.Headers["x-cdp-cognito-client-id"] = clientId;
+            context.Request.Headers["x-cdp-client-id"] = clientId;
         context.Request.Headers["x-cdp-user-id"] = "jane@example.com";
         context.Request.Headers["x-cdp-user-name"] = "Jane Smith";
         context.Request.Headers["x-cdp-auth-signature"] = signature;
@@ -114,7 +114,7 @@ public class CaseManagementAuthenticationHandlerTests
     public async Task MissingSignatureHeader_Fails()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers["x-cdp-cognito-client-id"] = TestClientId;
+        context.Request.Headers["x-cdp-client-id"] = TestClientId;
         context.Request.Headers["x-cdp-auth-timestamp"] = DateTime.UtcNow.ToString(
             "yyyy-MM-ddTHH:mm:ssZ"
         );
@@ -132,7 +132,7 @@ public class CaseManagementAuthenticationHandlerTests
     public async Task MissingTimestampHeader_Fails()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers["x-cdp-cognito-client-id"] = TestClientId;
+        context.Request.Headers["x-cdp-client-id"] = TestClientId;
         context.Request.Headers["x-cdp-auth-signature"] = "irrelevant-timestamp-missing";
         context.Request.Headers["x-cdp-auth-nonce"] = Convert.ToBase64String(
             Guid.NewGuid().ToByteArray()
@@ -148,7 +148,7 @@ public class CaseManagementAuthenticationHandlerTests
     public async Task MissingNonceHeader_Fails()
     {
         var context = new DefaultHttpContext();
-        context.Request.Headers["x-cdp-cognito-client-id"] = TestClientId;
+        context.Request.Headers["x-cdp-client-id"] = TestClientId;
         context.Request.Headers["x-cdp-auth-signature"] = "irrelevant-nonce-missing";
         context.Request.Headers["x-cdp-auth-timestamp"] = DateTime.UtcNow.ToString(
             "yyyy-MM-ddTHH:mm:ssZ"
@@ -174,7 +174,7 @@ public class CaseManagementAuthenticationHandlerTests
             timestamp,
             nonce
         );
-        context.Request.Headers["x-cdp-cognito-client-id"] = "some-other-client";
+        context.Request.Headers["x-cdp-client-id"] = "some-other-client";
         context.Request.Headers["x-cdp-auth-signature"] = signature;
         context.Request.Headers["x-cdp-auth-timestamp"] = timestamp;
         context.Request.Headers["x-cdp-auth-nonce"] = nonce;
@@ -354,7 +354,7 @@ public class CaseManagementAuthenticationHandlerTests
     [Fact]
     public void ComputeSignature_MatchesManagementBeEquivalentV3Algorithm()
     {
-        // Contract test (RA-311 fix 2): ManagementBe's CognitoClientIdAuthenticationHandler
+        // Contract test (RA-311 fix 2): ManagementBe's ClientIdAuthenticationHandler
         // signs a 5-field v3 payload — "v3", clientId, userId, userName, timestamp, nonce —
         // with no role-membership field. The computation is replicated here (not copied from
         // the sibling repo) so any future drift between the two shapes fails this test in CI
@@ -383,7 +383,7 @@ public class CaseManagementAuthenticationHandlerTests
         actual.Should().Be(expected);
     }
 
-    // Standalone replica of ManagementBe's CognitoClientIdAuthenticationHandler.ComputeSignature
+    // Standalone replica of ManagementBe's ClientIdAuthenticationHandler.ComputeSignature
     // (v3 canonical payload). Deliberately independent of the production implementation under
     // test above — asserting the two happen to match is the whole point of the contract test.
     private static string ManagementBeEquivalentComputeSignature(

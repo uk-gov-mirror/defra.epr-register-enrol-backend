@@ -53,7 +53,7 @@ public class HttpCaseWorkingApiAdapterTests
             new CaseWorkingApiConfig
             {
                 Url = url ?? "",
-                CognitoClientId = clientId,
+                ClientId = clientId,
                 SharedSecret = sharedSecret,
             }
         );
@@ -95,7 +95,7 @@ public class HttpCaseWorkingApiAdapterTests
     {
         var expectedId = Guid.NewGuid();
         var config = Options.Create(
-            new CaseWorkingApiConfig { Url = TestUrl, CognitoClientId = TestClientId }
+            new CaseWorkingApiConfig { Url = TestUrl, ClientId = TestClientId }
         );
         var handler = new CapturingHttpMessageHandler(
             HttpStatusCode.Created,
@@ -128,7 +128,7 @@ public class HttpCaseWorkingApiAdapterTests
         // an unparseable response can no longer be tolerated the way a missing id can — the
         // submission must fail rather than proceed without a valid reference to persist.
         var config = Options.Create(
-            new CaseWorkingApiConfig { Url = TestUrl, CognitoClientId = TestClientId }
+            new CaseWorkingApiConfig { Url = TestUrl, ClientId = TestClientId }
         );
         var handler = new RawBodyHttpMessageHandler(HttpStatusCode.Created, "not valid json");
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
@@ -152,7 +152,7 @@ public class HttpCaseWorkingApiAdapterTests
         // cancellationToken (which stays uncancelled here). RA-311 fix 3 requires this to become
         // a clean, distinguishable error rather than propagating an unhandled/generic exception.
         var config = Options.Create(
-            new CaseWorkingApiConfig { Url = TestUrl, CognitoClientId = TestClientId }
+            new CaseWorkingApiConfig { Url = TestUrl, ClientId = TestClientId }
         );
         var handler = new TimeoutHttpMessageHandler();
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
@@ -177,7 +177,7 @@ public class HttpCaseWorkingApiAdapterTests
         // TaskCanceledException from HttpClient, so the adapter must tell them apart via the
         // supplied CancellationToken's own IsCancellationRequested state.
         var config = Options.Create(
-            new CaseWorkingApiConfig { Url = TestUrl, CognitoClientId = TestClientId }
+            new CaseWorkingApiConfig { Url = TestUrl, ClientId = TestClientId }
         );
         var handler = new TimeoutHttpMessageHandler();
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
@@ -200,7 +200,7 @@ public class HttpCaseWorkingApiAdapterTests
     public async Task SubmitApplicationAsync_ResponseMissingApplicationReference_ThrowsHttpRequestException()
     {
         var config = Options.Create(
-            new CaseWorkingApiConfig { Url = TestUrl, CognitoClientId = TestClientId }
+            new CaseWorkingApiConfig { Url = TestUrl, ClientId = TestClientId }
         );
         var handler = new CapturingHttpMessageHandler(
             HttpStatusCode.Created,
@@ -231,7 +231,7 @@ public class HttpCaseWorkingApiAdapterTests
     public async Task SubmitApplicationAsync_ResponseMissingIdField_ReturnsNullWorkItemId()
     {
         var config = Options.Create(
-            new CaseWorkingApiConfig { Url = TestUrl, CognitoClientId = TestClientId }
+            new CaseWorkingApiConfig { Url = TestUrl, ClientId = TestClientId }
         );
         var handler = new CapturingHttpMessageHandler(
             HttpStatusCode.Created,
@@ -774,7 +774,7 @@ public class HttpCaseWorkingApiAdapterTests
 
         handler.CapturedRequest.Should().NotBeNull();
         var request = handler.CapturedRequest!;
-        request.Headers.GetValues("x-cdp-cognito-client-id").Should().ContainSingle(TestClientId);
+        request.Headers.GetValues("x-cdp-client-id").Should().ContainSingle(TestClientId);
         request.Headers.GetValues("x-cdp-user-id").Should().ContainSingle("jane@example.com");
         request.Headers.GetValues("x-cdp-user-name").Should().ContainSingle("Jane Smith");
     }
@@ -831,7 +831,7 @@ public class HttpCaseWorkingApiAdapterTests
         request.Headers.Contains("x-cdp-auth-signature").Should().BeFalse();
         request.Headers.Contains("x-cdp-auth-timestamp").Should().BeFalse();
         request.Headers.Contains("x-cdp-auth-nonce").Should().BeFalse();
-        request.Headers.Contains("x-cdp-cognito-client-id").Should().BeTrue();
+        request.Headers.Contains("x-cdp-client-id").Should().BeTrue();
     }
 
     [Fact]
@@ -959,7 +959,7 @@ public class HttpCaseWorkingApiAdapterTests
     {
         var workItemId = Guid.NewGuid();
         var config = Options.Create(
-            new CaseWorkingApiConfig { Url = TestUrl, CognitoClientId = TestClientId }
+            new CaseWorkingApiConfig { Url = TestUrl, ClientId = TestClientId }
         );
         var handler = new CapturingHttpMessageHandler(
             HttpStatusCode.OK,

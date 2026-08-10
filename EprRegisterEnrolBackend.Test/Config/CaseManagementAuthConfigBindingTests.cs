@@ -11,7 +11,7 @@ namespace EprRegisterEnrolBackend.Test.Config;
 // Naming-convention fix: CaseManagementAuthConfig.SharedSecret must be sourced
 // from the flat AUTH_SHARED_SECRET__MANAGEMENT_BE env var (CDP's secrets naming
 // convention — flat UPPER_SNAKE_CASE, not the nested CaseManagementAuth__*
-// form ExpectedCognitoClientId uses), rather than CaseManagementAuth:SharedSecret.
+// form ExpectedClientId uses), rather than CaseManagementAuth:SharedSecret.
 // See Program.cs and CaseManagementAuthConfig.cs.
 public class CaseManagementAuthConfigBindingTests
 {
@@ -26,7 +26,7 @@ public class CaseManagementAuthConfigBindingTests
             new Dictionary<string, string?>
             {
                 ["AUTH_SHARED_SECRET:MANAGEMENT_BE"] = "test-secret",
-                ["CaseManagementAuth:ExpectedCognitoClientId"] = "epr-register-enrol-management-be",
+                ["CaseManagementAuth:ExpectedClientId"] = "epr-register-enrol-management-be",
             }
         );
         using var scope = factory.Services.CreateScope();
@@ -36,7 +36,7 @@ public class CaseManagementAuthConfigBindingTests
             .Value;
 
         config.SharedSecret.Should().Be("test-secret");
-        config.ExpectedCognitoClientId.Should().Be("epr-register-enrol-management-be");
+        config.ExpectedClientId.Should().Be("epr-register-enrol-management-be");
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public sealed class CaseManagementAuthEnvVarMutationCollection
 }
 
 // Regression test for the exact bug class an external review caught once
-// already in this project (see ManagementBe's CognitoClientIdAuthentication
+// already in this project (see ManagementBe's ClientIdAuthentication
 // BuildClientSecrets fix): EnvironmentVariablesConfigurationProvider rewrites
 // "__" to ":" only for REAL OS environment variables, not for config injected
 // via AddInMemoryCollection/UseSetting — so a config-key-level test alone

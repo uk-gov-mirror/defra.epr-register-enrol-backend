@@ -4,7 +4,7 @@ public class CaseWorkingApiConfig
 {
     public string Url { get; set; } = "http://localhost:8085";
 
-    public string CognitoClientId { get; set; } = "epr-register-enrol-backend";
+    public string ClientId { get; set; } = "epr-register-enrol-backend";
 
     /// <summary>
     /// HMAC secret this service signs its outbound calls to ManagementBe

@@ -23,7 +23,7 @@ public class CaseWorkingApiConfigBindingTests
             {
                 ["CASE_MANAGEMENT_API_SHARED_SECRET"] = "test-secret",
                 ["CaseWorking:Url"] = "http://example.test",
-                ["CaseWorking:CognitoClientId"] = "epr-register-enrol-backend",
+                ["CaseWorking:ClientId"] = "epr-register-enrol-backend",
             }
         );
         using var scope = factory.Services.CreateScope();
@@ -34,7 +34,7 @@ public class CaseWorkingApiConfigBindingTests
 
         config.SharedSecret.Should().Be("test-secret");
         config.Url.Should().Be("http://example.test");
-        config.CognitoClientId.Should().Be("epr-register-enrol-backend");
+        config.ClientId.Should().Be("epr-register-enrol-backend");
     }
 
     [Fact]

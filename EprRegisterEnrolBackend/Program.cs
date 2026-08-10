@@ -147,7 +147,7 @@ static void ConfigureBuilder(WebApplicationBuilder builder)
     // AUTH_SHARED_SECRET__MANAGEMENT_BE is stored under config key
     // "AUTH_SHARED_SECRET:MANAGEMENT_BE" — a GetValue call using the literal
     // double-underscore string never matches it (see ManagementBe's own
-    // CognitoClientIdAuthentication BuildClientSecrets for the same gotcha).
+    // ClientIdAuthentication BuildClientSecrets for the same gotcha).
     builder.Services.AddMemoryCache();
     builder.Services.Configure<CaseManagementAuthConfig>(config =>
     {
